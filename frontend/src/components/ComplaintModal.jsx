@@ -14,8 +14,22 @@ const ComplaintModal = ({ isOpen, onClose, onRefresh }) => {
         e.preventDefault();
         setLoading(true);
         try {
-            // Mock submission for now (since we haven't implemented backend upload yet)
-            await new Promise(resolve => setTimeout(resolve, 1500));
+            const formData = new FormData();
+            formData.append('description', description);
+            formData.append('category', category);
+            // Mock location for now
+            formData.append('latitude', '12.9716');
+            formData.append('longitude', '77.5946');
+            formData.append('address', 'Bengaluru, India');
+
+            if (image) {
+                formData.append('image', image);
+            }
+
+            await api.post('/complaints', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+
             setSuccess(true);
             setTimeout(() => {
                 onClose();

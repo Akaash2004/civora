@@ -3,6 +3,8 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import VerifyOtp from './pages/VerifyOtp';
 import CitizenDashboard from './pages/CitizenDashboard';
+import AuthorityDashboard from './pages/AuthorityDashboard';
+import AdminDashboard from './pages/AdminDashboard';
 
 const ProtectedRoute = ({ children, role }) => {
     const user = JSON.parse(localStorage.getItem('user'));
@@ -23,6 +25,16 @@ function App() {
                     <Route path="/dashboard" element={
                         <ProtectedRoute role="citizen">
                             <CitizenDashboard />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/dept-dashboard" element={
+                        <ProtectedRoute role="authority">
+                            <AuthorityDashboard />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/admin-dashboard" element={
+                        <ProtectedRoute role="admin">
+                            <AdminDashboard />
                         </ProtectedRoute>
                     } />
                 </Routes>
