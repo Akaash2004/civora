@@ -91,3 +91,36 @@ exports.verifyOtp = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+// @desc    Register Authority (Admin Only)
+// @route   POST /api/auth/register-authority
+// @access  Private (Admin)
+exports.registerAuthority = async (req, res) => {
+    try {
+        const { uniqueId, password, department } = req.body;
+
+        const userExists = await User.findOne({ uniqueId });
+        if (userExists) {
+            return res.status(400).json({ message: 'Authority ID already exists' });
+        }
+
+        const user = await User.create({
+            uniqueId,
+            password,
+            department,
+            role: 'authority',
+            isOtpVerified: true
+        });
+
+        res.status(201).json({
+            message: 'Authority account created successfully',
+            user: {
+                uniqueId: user.uniqueId,
+                department: user.department,
+                role: user.role
+            }
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
