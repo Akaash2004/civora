@@ -1,3 +1,4 @@
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import VerifyOtp from './pages/VerifyOtp';
@@ -13,4 +14,21 @@ const ProtectedRoute = ({ children, role }) => {
 function App() {
     return (
         <Router>
-            <di
+            <div className="min-h-screen bg-gray-50 text-gray-900 font-sans">
+                <Routes>
+                    <Route path="/" element={<Navigate to="/login" />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/register" element={<Register />} />
+                    <Route path="/verify-otp" element={<VerifyOtp />} />
+                    <Route path="/dashboard" element={
+                        <ProtectedRoute role="citizen">
+                            <CitizenDashboard />
+                        </ProtectedRoute>
+                    } />
+                </Routes>
+            </div>
+        </Router>
+    );
+}
+
+export default App;
