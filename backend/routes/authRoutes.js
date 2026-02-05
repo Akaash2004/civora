@@ -1,3 +1,5 @@
+const express = require('express');
+const router = express.Router();
 const { protect, authorize } = require('../middleware/authMiddleware');
 const { registerCitizen, login, verifyOtp, registerAuthority } = require('../controllers/authController');
 
