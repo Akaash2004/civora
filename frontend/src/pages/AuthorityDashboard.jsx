@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
-import api from '../utils/api';
+import api, { API_BASE_URL } from '../utils/api';
 import { Filter, MessageCircle, Clock, CheckCircle2, AlertTriangle, ChevronRight, MapPin } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -25,13 +25,15 @@ const AuthorityDashboard = () => {
     };
 
     const handleUpdateStatus = async (id, status) => {
+        const remarks = window.prompt("Enter remarks for this update (optional):");
         try {
-            await api.patch(`/complaints/${id}`, { status });
+            await api.patch(`/complaints/${id}`, { status, remarks });
             fetchComplaints();
         } catch (err) {
             console.error(err);
         }
     };
+
 
     return (
         <div className="min-h-screen bg-white">
@@ -72,13 +74,18 @@ const AuthorityDashboard = () => {
                                 >
                                     <div className="flex gap-6 items-center">
                                         <div className="w-20 h-20 rounded-2xl overflow-hidden bg-gray-200">
-                                            <img src={complaint.imageUrl} alt="Issue" className="w-full h-full object-cover" />
+                                            <img
+                                                src={complaint.imageUrl.startsWith('http') ? complaint.imageUrl : `${API_BASE_URL}/${complaint.imageUrl}`}
+                                                alt="Issue"
+                                                className="w-full h-full object-cover"
+                                            />
                                         </div>
+
                                         <div>
                                             <div className="flex items-center gap-2 mb-2">
                                                 <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter border ${complaint.status === 'Pending' ? 'bg-amber-100 text-amber-700 border-amber-200' :
-                                                        complaint.status === 'In Progress' ? 'bg-blue-100 text-blue-700 border-blue-200' :
-                                                            'bg-emerald-100 text-emerald-700 border-emerald-200'
+                                                    complaint.status === 'In Progress' ? 'bg-blue-100 text-blue-700 border-blue-200' :
+                                                        'bg-emerald-100 text-emerald-700 border-emerald-200'
                                                     }`}>
                                                     {complaint.status}
                                                 </span>

@@ -8,8 +8,9 @@ exports.createComplaint = async (req, res) => {
         const { description, category, latitude, longitude, address } = req.body;
 
         // Image URL will come from the upload middleware (multer)
-        // For now, if no image is uploaded, we'll use a placeholder
-        const imageUrl = req.file ? req.file.path : 'https://via.placeholder.com/400x300?text=No+Image';
+        // Normalize path to forward slashes for URL compatibility
+        const imageUrl = req.file ? req.file.path.replace(/\\/g, '/') : 'https://via.placeholder.com/400x300?text=No+Image';
+
 
         const complaint = await Complaint.create({
             citizen: req.user._id,

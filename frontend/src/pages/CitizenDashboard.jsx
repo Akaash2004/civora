@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import ComplaintModal from '../components/ComplaintModal';
-import api from '../utils/api';
+import api, { API_BASE_URL } from '../utils/api';
 import { Plus, Filter, MessageSquare, MapPin, ThumbsUp, Clock, CheckCircle2, AlertCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -104,8 +104,13 @@ const CitizenDashboard = () => {
                                 <div className="flex items-start gap-4">
                                     <div className="w-16 h-16 bg-gray-100 rounded-xl flex-shrink-0 flex items-center justify-center overflow-hidden">
                                         {complaint.imageUrl ? (
-                                            <img src={complaint.imageUrl} className="w-full h-full object-cover" alt="Issue" />
+                                            <img
+                                                src={complaint.imageUrl.startsWith('http') ? complaint.imageUrl : `${API_BASE_URL}/${complaint.imageUrl}`}
+                                                className="w-full h-full object-cover"
+                                                alt="Issue"
+                                            />
                                         ) : (
+
                                             <MessageSquare size={24} className="text-gray-300" />
                                         )}
                                     </div>
