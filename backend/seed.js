@@ -2,6 +2,14 @@ const mongoose = require('mongoose');
 const User = require('./models/User');
 require('dotenv').config();
 
+const departments = [
+    { uniqueId: 'SAN001', department: 'Sanitation', password: 'sanitation123' },
+    { uniqueId: 'PWD001', department: 'PWD', password: 'pwd123' },
+    { uniqueId: 'WAT001', department: 'Water Supply', password: 'water123' },
+    { uniqueId: 'ELE001', department: 'Electricity', password: 'electricity123' },
+    { uniqueId: 'DRA001', department: 'Drainage', password: 'drainage123' }
+];
+
 const seed = async () => {
     try {
         await mongoose.connect(process.env.MONGODB_URI);
@@ -21,21 +29,27 @@ const seed = async () => {
             console.log('Admin already exists');
         }
 
-        // Create Test Authority
-        const authorityExists = await User.findOne({ uniqueId: 'DEPT001' });
-        if (!authorityExists) {
-            await User.create({
-                uniqueId: 'DEPT001',
-                password: 'authority123',
-                department: 'Sanitation',
-                role: 'authority',
-                isOtpVerified: true
-            });
-            console.log('Authority created: DEPT001 / authority123 (Sanitation)');
-        } else {
-            console.log('Authority already exists');
+        // Create Department Authorities
+        for (const dept of departments) {
+            const authorityExists = await User.findOne({ uniqueId: dept.uniqueId });
+            if (!authorityExists) {
+                await User.create({
+                    uniqueId: dept.uniqueId,
+                    password: dept.password,
+                    department: dept.department,
+                    role: 'authority',
+                    isOtpVerified: true
+                });
+                console.log(`Authority created: ${dept.uniqueId} / ${dept.password} (${dept.department})`);
+            } else {
+                // Update password to ensure it matches what we expect
+                authorityExists.password = dept.password;
+                await authorityExists.save();
+                console.log(`Authority updated: ${dept.uniqueId} password reset to ${dept.password}`);
+            }
         }
 
+        console.log('\nSeed completed successfully!');
         process.exit(0);
     } catch (error) {
         console.error('Error seeding:', error);
@@ -44,3 +58,4 @@ const seed = async () => {
 };
 
 seed();
+
