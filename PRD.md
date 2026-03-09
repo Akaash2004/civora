@@ -25,7 +25,7 @@ Existing civic complaint systems are slow, lack automation, transparency, and ci
 | 2 | **Complaint Submission Module** | Enables users to submit civic complaints using text or images. | ✅ Done |
 | 3 | **AI Processing Module** | Automatically detects and classifies complaints using YOLOv8 and NLP. | 🔲 Pending |
 | 4 | **Geotagging Module** | Captures and stores the exact location of the reported issue. | ✅ Done |
-| 5 | **Voting & Priority Module** | Allows citizens to vote on complaints to highlight important issues. | 🔲 Pending |
+| 5 | **Voting & Priority Module** | Allows citizens to vote on complaints to highlight important issues. | ✅ Done |
 | 6 | **Complaint Tracking Module** | Displays real-time status updates of complaints. | 🔲 Pending |
 | 7 | **Admin Module** | Enables authorities to manage, update, and resolve complaints. | 🔲 Pending |
 

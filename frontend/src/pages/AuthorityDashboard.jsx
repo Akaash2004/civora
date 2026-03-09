@@ -24,6 +24,15 @@ const AuthorityDashboard = () => {
         }
     };
 
+    const sortedComplaints = [...complaints].sort((a, b) => {
+        const priorityWeight = { 'High': 3, 'Medium': 2, 'Low': 1 };
+        const pA = priorityWeight[a.priority] || 0;
+        const pB = priorityWeight[b.priority] || 0;
+        
+        if (pB !== pA) return pB - pA;
+        return (b.votes?.length || 0) - (a.votes?.length || 0); // Tie breaker on votes
+    });
+
     const handleUpdateStatus = async (id, status) => {
         const remarks = window.prompt("Enter remarks for this update (optional):");
         try {
@@ -66,7 +75,7 @@ const AuthorityDashboard = () => {
                         <p>Loading complaints...</p>
                     ) : (
                         <div className="grid grid-cols-1 gap-4">
-                            {complaints.map((complaint) => (
+                            {sortedComplaints.map((complaint) => (
                                 <motion.div
                                     key={complaint._id}
                                     layout
@@ -94,7 +103,18 @@ const AuthorityDashboard = () => {
                                                 </span>
                                             </div>
                                             <h3 className="text-xl font-bold text-gray-900">{complaint.description}</h3>
-                                            <p className="text-gray-500 text-sm mt-1">Priority: <span className="text-primary-600 font-bold">{complaint.priority}</span> • Votes: {complaint.votes?.length}</p>
+                                            <div className="flex items-center gap-3 mt-1">
+                                                <span className={`px-2.5 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-widest ${
+                                                    complaint.priority === 'High' ? 'bg-red-100 text-red-700' :
+                                                    complaint.priority === 'Medium' ? 'bg-amber-100 text-amber-700' :
+                                                    'bg-gray-100 text-gray-600'
+                                                }`}>
+                                                    {complaint.priority} Priority
+                                                </span>
+                                                <span className="text-gray-500 text-sm font-semibold flex items-center gap-1">
+                                                    • {complaint.votes?.length || 0} Votes
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
 

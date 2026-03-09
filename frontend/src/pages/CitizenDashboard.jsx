@@ -9,6 +9,8 @@ const CitizenDashboard = () => {
     const [complaints, setComplaints] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [sortBy, setSortBy] = useState('newest'); // 'newest' | 'votes'
+    const user = JSON.parse(localStorage.getItem('user'));
 
     useEffect(() => {
         fetchComplaints();
@@ -24,6 +26,37 @@ const CitizenDashboard = () => {
             setLoading(false);
         }
     };
+
+    const handleVote = async (id) => {
+        const userId = user._id || user.id;
+        
+        // Optimistic UI update
+        setComplaints(prev => prev.map(c => {
+            if (c._id === id) {
+                const hasVoted = c.votes?.includes(userId);
+                return {
+                    ...c,
+                    votes: hasVoted ? c.votes.filter(v => v !== userId) : [...(c.votes || []), userId]
+                };
+            }
+            return c;
+        }));
+
+        try {
+            await api.post(`/complaints/${id}/vote`);
+        } catch (err) {
+            console.error("Vote failed:", err);
+            fetchComplaints(); // Revert on failure
+        }
+    };
+
+    // Sort complaints before rendering
+    const sortedComplaints = [...complaints].sort((a, b) => {
+        if (sortBy === 'votes') {
+            return (b.votes?.length || 0) - (a.votes?.length || 0);
+        }
+        return new Date(b.createdAt) - new Date(a.createdAt);
+    });
 
     const getStatusStyle = (status) => {
         switch (status) {
@@ -83,6 +116,14 @@ const CitizenDashboard = () => {
                     <div className="p-6 border-b border-gray-50 flex items-center justify-between">
                         <h2 className="text-xl font-bold text-gray-800">Recent Complaints</h2>
                         <div className="flex items-center gap-2">
+                            <select 
+                                value={sortBy} 
+                                onChange={(e) => setSortBy(e.target.value)}
+                                className="p-2 bg-gray-50 border border-gray-200 rounded-lg text-sm font-bold text-gray-600 outline-none focus:ring-2 focus:ring-primary-500"
+                            >
+                                <option value="newest">Newest First</option>
+                                <option value="votes">Most Supported</option>
+                            </select>
                             <button className="p-2 hover:bg-gray-50 rounded-lg text-gray-500 border border-gray-200">
                                 <Filter size={18} />
                             </button>
@@ -92,9 +133,12 @@ const CitizenDashboard = () => {
                     <div className="divide-y divide-gray-50">
                         {loading ? (
                             <div className="p-12 text-center text-gray-500 font-medium italic">Loading your complaints...</div>
-                        ) : complaints.length === 0 ? (
+                        ) : sortedComplaints.length === 0 ? (
                             <div className="p-12 text-center text-gray-400">No complaints submitted yet.</div>
-                        ) : complaints.map((complaint) => (
+                        ) : sortedComplaints.map((complaint) => {
+                            const hasVoted = complaint.votes?.includes(user._id || user.id);
+                            
+                            return (
                             <motion.div
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
@@ -131,14 +175,21 @@ const CitizenDashboard = () => {
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-4 border-t md:border-t-0 pt-4 md:pt-0">
-                                    <button className="flex items-center gap-2 px-4 py-2 rounded-xl border border-gray-200 hover:border-primary-500 hover:text-primary-600 transition-all font-semibold text-gray-600">
-                                        <ThumbsUp size={18} />
+                                    <button 
+                                        onClick={() => handleVote(complaint._id)}
+                                        className={`flex items-center gap-2 px-4 py-2 rounded-xl border transition-all font-semibold ${
+                                            hasVoted 
+                                                ? 'bg-primary-50 border-primary-200 text-primary-600' 
+                                                : 'bg-white border-gray-200 hover:border-primary-500 hover:text-primary-600 text-gray-600'
+                                        }`}
+                                    >
+                                        <ThumbsUp size={18} className={hasVoted ? 'fill-primary-600' : ''} />
                                         {complaint.votes?.length || 0} Votes
                                     </button>
                                     <button className="text-primary-600 font-bold hover:underline text-sm">View Details</button>
                                 </div>
                             </motion.div>
-                        ))}
+                        )})}
                     </div>
 
                     <div className="p-6 bg-gray-50/30 text-center">

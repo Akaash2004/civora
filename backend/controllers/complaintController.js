@@ -101,8 +101,18 @@ exports.voteComplaint = async (req, res) => {
             complaint.votes.push(req.user._id);
         }
 
+        // Auto-update priority based on votes
+        const voteCount = complaint.votes.length;
+        if (voteCount >= 15) {
+            complaint.priority = 'High';
+        } else if (voteCount >= 5) {
+            complaint.priority = 'Medium';
+        } else {
+            complaint.priority = 'Low';
+        }
+
         await complaint.save();
-        res.json({ votes: complaint.votes.length });
+        res.json({ votes: complaint.votes.length, priority: complaint.priority });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

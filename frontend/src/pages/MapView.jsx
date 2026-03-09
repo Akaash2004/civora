@@ -89,7 +89,7 @@ const MapView = () => {
                         ${c.description.length > 80 ? c.description.slice(0, 80) + '…' : c.description}
                     </p>
                     <p style="color:#9ca3af;font-size:11px;margin:0">📍 ${address}</p>
-                    <p style="color:#9ca3af;font-size:11px;margin:4px 0 0">📅 ${date}</p>
+                    <p style="color:#9ca3af;font-size:11px;margin:4px 0 0">📅 ${date} • 👍 ${c.votes?.length || 0} Votes</p>
                 </div>
             `);
 
