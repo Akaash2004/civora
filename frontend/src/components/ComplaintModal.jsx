@@ -44,6 +44,11 @@ const ComplaintModal = ({ isOpen, onClose, onRefresh }) => {
                 (error) => {
                     console.error("Geolocation error:", error);
                     setLocation({ lat: 0, lng: 0, address: "Location access denied. Please enter manually." });
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0
                 }
             );
         } else {
