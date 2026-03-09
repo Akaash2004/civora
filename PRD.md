@@ -17,22 +17,34 @@ Existing civic complaint systems are slow, lack automation, transparency, and ci
 * Department Authorities (PWD, Sanitation, Water Supply, Electricity, Drainage)
 * System Administrators
 
-## 5. User Registration & Authentication
-### 5.1 Citizens (Public Users)
+## 5. Project Modules
+
+| # | Module | Description | Status |
+|---|--------|-------------|--------|
+| 1 | **User Module** | Allows users to register, login, and access the system. | ✅ Done |
+| 2 | **Complaint Submission Module** | Enables users to submit civic complaints using text or images. | ✅ Done |
+| 3 | **AI Processing Module** | Automatically detects and classifies complaints using YOLOv8 and NLP. | 🔲 Pending |
+| 4 | **Geotagging Module** | Captures and stores the exact location of the reported issue. | ✅ Done |
+| 5 | **Voting & Priority Module** | Allows citizens to vote on complaints to highlight important issues. | 🔲 Pending |
+| 6 | **Complaint Tracking Module** | Displays real-time status updates of complaints. | 🔲 Pending |
+| 7 | **Admin Module** | Enables authorities to manage, update, and resolve complaints. | 🔲 Pending |
+
+## 6. User Registration & Authentication
+### 6.1 Citizens (Public Users)
 * Register using phone number and password
 * OTP verification during signup
 * Login using phone number and password
 * Access to citizen dashboard
 
-### 5.2 Department Authorities
+### 6.2 Department Authorities
 * Managed by Admin
 * Assigned unique ID and password
-* specific department access
+* Specific department access
 
-### 5.3 Admin
+### 6.3 Admin
 * Full system access
 
-## 6. Key Features
+## 7. Key Features
 * **Complaint Registration**: Image upload, YOLOv8 detection, NLP classification.
 * **Location Mapping**: Geotagging and Map visualization.
 * **Complaint Tracking**: Real-time status, history.

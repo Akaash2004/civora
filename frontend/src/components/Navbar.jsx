@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { LogOut, User, Bell, Shield, ChevronDown } from 'lucide-react';
+import { LogOut, User, Bell, Shield, Map } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const Navbar = () => {
@@ -29,6 +29,15 @@ const Navbar = () => {
                     <div className="flex items-center gap-6">
                         {user ? (
                             <>
+                                {/* Map link */}
+                                <Link
+                                    to="/map"
+                                    className="flex items-center gap-1.5 text-sm font-bold text-gray-500 hover:text-primary-600 transition-colors"
+                                >
+                                    <Map size={18} />
+                                    <span className="hidden sm:inline">Map</span>
+                                </Link>
+
                                 <button className="p-2.5 text-gray-400 hover:text-primary-600 hover:bg-primary-50 rounded-xl transition-all relative">
                                     <Bell size={22} />
                                     <span className="absolute top-2.5 right-2.5 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"></span>

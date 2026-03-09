@@ -6,6 +6,7 @@ import VerifyOtp from './pages/VerifyOtp';
 import CitizenDashboard from './pages/CitizenDashboard';
 import AuthorityDashboard from './pages/AuthorityDashboard';
 import AdminDashboard from './pages/AdminDashboard';
+import MapView from './pages/MapView';
 
 const ProtectedRoute = ({ children, role }) => {
     const user = JSON.parse(localStorage.getItem('user'));
@@ -36,6 +37,11 @@ function App() {
                     <Route path="/admin-dashboard" element={
                         <ProtectedRoute role="admin">
                             <AdminDashboard />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/map" element={
+                        <ProtectedRoute>
+                            <MapView />
                         </ProtectedRoute>
                     } />
                 </Routes>
