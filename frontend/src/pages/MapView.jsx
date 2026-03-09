@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, CircleMarker, Popup } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
 import Navbar from '../components/Navbar';
 import api from '../utils/api';
 import { MapPin, Calendar, Tag, AlertCircle, Clock, CheckCircle2, XCircle } from 'lucide-react';
