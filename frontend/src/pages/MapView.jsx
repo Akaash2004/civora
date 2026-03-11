@@ -38,16 +38,30 @@ const MapView = () => {
         if (!mapContainerRef.current || mapboxMap.current) return;
 
         try {
+            // Restrict map to Chennai bounding box
+            const chennaiBounds = [
+                [79.9200, 12.8200], // Southwest coordinates [lng, lat]
+                [80.3500, 13.2000]  // Northeast coordinates [lng, lat]
+            ];
+
             mapboxMap.current = new mapboxgl.Map({
                 container: mapContainerRef.current,
                 style: 'mapbox://styles/mapbox/light-v11',
-                center: [80.2707, 13.0827], // Note Mapbox uses [lng, lat]
-                zoom: 12
+                center: [80.2000, 13.0400], // Chennai center
+                zoom: 11,
+                minZoom: 10,
+                maxBounds: chennaiBounds // Restrict map panning
             });
 
             mapboxMap.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
+
+            // Force map to resize to fit container after mounting
+            mapboxMap.current.on('load', () => {
+                mapboxMap.current.resize();
+            });
         } catch (err) {
-            setError('Mapbox library failed to load or initialize.');
+            console.error('Mapbox initialization error:', err);
+            setError('Mapbox library failed to load or initialize. See console for details.');
         }
 
         return () => {
@@ -169,8 +183,8 @@ const MapView = () => {
                     )}
                     <div
                         ref={mapContainerRef}
-                        style={{ height: 520, borderRadius: '1.5rem', overflow: 'hidden', display: loading ? 'none' : 'block' }}
-                        className="shadow-lg border border-gray-200"
+                        style={{ height: 520, width: '100%', borderRadius: '1.5rem', overflow: 'hidden', display: loading ? 'none' : 'block' }}
+                        className="shadow-lg border border-gray-200 w-full"
                     />
                     {!loading && markersRef.current.length === 0 && !error && (
                         <p className="text-center text-gray-400 mt-4 font-medium">
