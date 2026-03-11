@@ -59,6 +59,25 @@ exports.getComplaints = async (req, res) => {
     }
 };
 
+// @desc    Get Single Complaint by ID
+// @route   GET /api/complaints/:id
+// @access  Private
+exports.getComplaintById = async (req, res) => {
+    try {
+        const complaint = await Complaint.findById(req.params.id)
+            .populate('citizen', 'phoneNumber name');
+
+        if (!complaint) {
+            return res.status(404).json({ message: 'Complaint not found' });
+        }
+
+        // Return the complaint details
+        res.json(complaint);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 // @desc    Update Complaint Status/Remarks
 // @route   PATCH /api/complaints/:id
 // @access  Private (Authority/Admin)

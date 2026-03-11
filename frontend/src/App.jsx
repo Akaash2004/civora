@@ -7,6 +7,7 @@ import CitizenDashboard from './pages/CitizenDashboard';
 import AuthorityDashboard from './pages/AuthorityDashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import MapView from './pages/MapView';
+import ComplaintTracking from './pages/ComplaintTracking';
 
 const ProtectedRoute = ({ children, role }) => {
     const user = JSON.parse(localStorage.getItem('user'));
@@ -42,6 +43,11 @@ function App() {
                     <Route path="/map" element={
                         <ProtectedRoute>
                             <MapView />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/complaint/:id" element={
+                        <ProtectedRoute>
+                            <ComplaintTracking />
                         </ProtectedRoute>
                     } />
                 </Routes>

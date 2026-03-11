@@ -3,6 +3,7 @@ const router = express.Router();
 const {
     createComplaint,
     getComplaints,
+    getComplaintById,
     updateComplaint,
     voteComplaint
 } = require('../controllers/complaintController');
@@ -40,6 +41,7 @@ router.route('/')
     .get(protect, getComplaints);
 
 router.route('/:id')
+    .get(protect, getComplaintById)
     .patch(protect, authorize('authority', 'admin'), updateComplaint);
 
 router.route('/:id/vote')

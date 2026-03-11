@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import ComplaintModal from '../components/ComplaintModal';
 import api, { API_BASE_URL } from '../utils/api';
@@ -186,7 +187,9 @@ const CitizenDashboard = () => {
                                         <ThumbsUp size={18} className={hasVoted ? 'fill-primary-600' : ''} />
                                         {complaint.votes?.length || 0} Votes
                                     </button>
-                                    <button className="text-primary-600 font-bold hover:underline text-sm">View Details</button>
+                                    <Link to={`/complaint/${complaint._id}`} className="text-primary-600 font-bold hover:underline text-sm">
+                                        View Details
+                                    </Link>
                                 </div>
                             </motion.div>
                         )})}
