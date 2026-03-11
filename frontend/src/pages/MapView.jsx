@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Navbar from '../components/Navbar';
 import api from '../utils/api';
+import mapboxgl from 'mapbox-gl';
+import 'mapbox-gl/dist/mapbox-gl.css';
 import { MapPin, Calendar, Tag, AlertCircle, Clock, CheckCircle2, XCircle } from 'lucide-react';
 
 const STATUS_CONFIG = {
@@ -10,6 +12,8 @@ const STATUS_CONFIG = {
     'Fake/Invalid': { color: '#ef4444', label: 'Fake/Invalid', Icon: XCircle },
 };
 
+mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN;
+
 const MapView = () => {
     const [complaints, setComplaints]       = useState([]);
     const [loading, setLoading]             = useState(true);
@@ -17,8 +21,8 @@ const MapView = () => {
     const [activeFilters, setActiveFilters] = useState(
         Object.keys(STATUS_CONFIG).reduce((acc, k) => ({ ...acc, [k]: true }), {})
     );
-    const mapRef     = useRef(null); // DOM node
-    const leafletMap = useRef(null); // Leaflet map instance
+    const mapContainerRef = useRef(null); // DOM node
+    const mapboxMap = useRef(null); // Mapbox map instance
     const markersRef = useRef([]);   // track current markers
 
     // ── Fetch complaints ─────────────────────────────────────────
@@ -29,34 +33,36 @@ const MapView = () => {
             .finally(() => setLoading(false));
     }, []);
 
-    // ── Initialise Leaflet map once ────────────────────────────────
+    // ── Initialise Mapbox map once ────────────────────────────────
     useEffect(() => {
-        if (!mapRef.current || leafletMap.current) return;
-        const L = window.L;
-        if (!L) { setError('Leaflet library failed to load. Check your internet connection.'); return; }
+        if (!mapContainerRef.current || mapboxMap.current) return;
 
-        leafletMap.current = L.map(mapRef.current).setView([13.0827, 80.2707], 12);
+        try {
+            mapboxMap.current = new mapboxgl.Map({
+                container: mapContainerRef.current,
+                style: 'mapbox://styles/mapbox/light-v11',
+                center: [80.2707, 13.0827], // Note Mapbox uses [lng, lat]
+                zoom: 12
+            });
 
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-            subdomains: 'abcd',
-            maxZoom: 20
-        }).addTo(leafletMap.current);
+            mapboxMap.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
+        } catch (err) {
+            setError('Mapbox library failed to load or initialize.');
+        }
 
         return () => {
-            leafletMap.current?.remove();
-            leafletMap.current = null;
+            mapboxMap.current?.remove();
+            mapboxMap.current = null;
         };
     }, []);
 
     // ── Re-draw markers whenever complaints or filters change ──────
     useEffect(() => {
-        const map = leafletMap.current;
-        const L   = window.L;
-        if (!map || !L) return;
+        const map = mapboxMap.current;
+        if (!map) return;
 
         // Clear old markers
-        markersRef.current.forEach(m => map.removeLayer(m));
+        markersRef.current.forEach(m => m.remove());
         markersRef.current = [];
 
         complaints.forEach((c) => {
@@ -66,19 +72,23 @@ const MapView = () => {
 
             const cfg = STATUS_CONFIG[c.status] ?? STATUS_CONFIG['Pending'];
 
-            const marker = L.circleMarker([lat, lng], {
-                radius:      9,
-                color:       '#ffffff',
-                weight:      2,
-                fillColor:   cfg.color,
-                fillOpacity: 0.9,
-            });
+            // Create custom marker DOM element
+            const el = document.createElement('div');
+            el.className = 'custom-marker';
+            el.style.width = '18px';
+            el.style.height = '18px';
+            el.style.backgroundColor = cfg.color;
+            el.style.border = '2px solid #ffffff';
+            el.style.borderRadius = '50%';
+            el.style.opacity = '0.9';
+            el.style.cursor = 'pointer';
+            el.style.boxShadow = '0 2px 4px rgba(0,0,0,0.3)';
 
             const address = c.location?.address || `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
             const date    = new Date(c.createdAt).toLocaleDateString();
 
-            marker.bindPopup(`
-                <div style="font-family:sans-serif;font-size:13px;line-height:1.5;min-width:200px">
+            const popup = new mapboxgl.Popup({ offset: 12, closeButton: false }).setHTML(`
+                <div style="font-family:sans-serif;font-size:13px;line-height:1.5;min-width:200px;padding:4px">
                     <span style="background:${cfg.color};color:#fff;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700">
                         ${c.status}
                     </span>
@@ -93,18 +103,17 @@ const MapView = () => {
                 </div>
             `);
 
-            marker.addTo(map);
+            const marker = new mapboxgl.Marker(el)
+                .setLngLat([lng, lat])
+                .setPopup(popup)
+                .addTo(map);
+
             markersRef.current.push(marker);
         });
     }, [complaints, activeFilters]);
 
     const toggleFilter = (status) =>
         setActiveFilters(prev => ({ ...prev, [status]: !prev[status] }));
-
-    const plottable = complaints.filter(c => {
-        const [lng, lat] = c.location?.coordinates ?? [0, 0];
-        return lat !== 0 || lng !== 0;
-    });
 
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -159,7 +168,7 @@ const MapView = () => {
                         </div>
                     )}
                     <div
-                        ref={mapRef}
+                        ref={mapContainerRef}
                         style={{ height: 520, borderRadius: '1.5rem', overflow: 'hidden', display: loading ? 'none' : 'block' }}
                         className="shadow-lg border border-gray-200"
                     />
