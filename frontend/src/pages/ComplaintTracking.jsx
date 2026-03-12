@@ -246,19 +246,49 @@ const ComplaintTracking = () => {
                                 </div>
                             </div>
 
-                            {/* Authority Remarks Section */}
-                            {(complaint.remarks || complaint.status !== 'Pending') && (
-                                <div className="mt-8 pt-6 border-t border-gray-100">
-                                    <h3 className="text-sm font-bold text-gray-900 uppercase tracking-widest mb-3">Authority Remarks</h3>
-                                    {complaint.remarks ? (
-                                        <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
-                                            <p className="text-sm text-gray-700 italic">"{complaint.remarks}"</p>
-                                        </div>
-                                    ) : (
-                                        <p className="text-sm text-gray-400 font-medium italic">No remarks provided yet.</p>
-                                    )}
-                                </div>
-                            )}
+                            {/* Authority Remarks Timeline */}
+                            <div className="mt-8 pt-6 border-t border-gray-100">
+                                <h3 className="text-sm font-bold text-gray-900 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                    <MessageSquare size={14} className="text-primary-600" />
+                                    Authority Updates
+                                </h3>
+                                {complaint.remarks && complaint.remarks.length > 0 ? (
+                                    <div className="space-y-3">
+                                        {complaint.remarks.map((remark, idx) => (
+                                            <div key={remark._id || idx} className="flex gap-3">
+                                                {/* Timeline dot */}
+                                                <div className="flex flex-col items-center">
+                                                    <div className="w-2 h-2 rounded-full bg-primary-500 mt-2 flex-shrink-0" />
+                                                    {idx < complaint.remarks.length - 1 && (
+                                                        <div className="w-px flex-1 bg-gray-100 mt-1" />
+                                                    )}
+                                                </div>
+                                                <div className="flex-1 pb-3">
+                                                    <div className="flex flex-wrap items-center gap-2 mb-1">
+                                                        <span className={`px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider ${
+                                                            remark.statusAtTime === 'Resolved' ? 'bg-emerald-100 text-emerald-700' :
+                                                            remark.statusAtTime === 'In Progress' ? 'bg-blue-100 text-blue-700' :
+                                                            remark.statusAtTime === 'Fake/Invalid' ? 'bg-red-100 text-red-700' :
+                                                            'bg-amber-100 text-amber-700'
+                                                        }`}>
+                                                            {remark.statusAtTime || 'Update'}
+                                                        </span>
+                                                        <span className="text-[11px] text-gray-400 font-medium">
+                                                            {new Date(remark.createdAt).toLocaleString()}
+                                                        </span>
+                                                    </div>
+                                                    <p className="text-sm text-gray-700 bg-gray-50 rounded-xl px-3 py-2 border border-gray-100">
+                                                        {remark.text}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <p className="text-sm text-gray-400 font-medium italic">No updates from authority yet.</p>
+                                )}
+                            </div>
+
 
                             {/* Resolution Proof Section */}
                             {proofUrl && (

@@ -45,9 +45,13 @@ const complaintSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     }],
-    remarks: {
-        type: String
-    },
+    remarks: [
+        {
+            text: { type: String, required: true },
+            statusAtTime: { type: String },
+            createdAt: { type: Date, default: Date.now }
+        }
+    ],
     resolutionProofUrl: {
         type: String
     },

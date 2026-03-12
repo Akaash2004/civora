@@ -248,13 +248,18 @@ const AuthorityDashboard = () => {
                             <form onSubmit={handleSubmit} className="p-6 space-y-5">
                                 {/* Remarks */}
                                 <div>
-                                    <label className="block text-xs font-black text-gray-700 uppercase tracking-widest mb-2">
-                                        Remarks <span className="text-gray-400 normal-case font-medium">(optional)</span>
+                                    <label className="block text-xs font-black text-gray-700 uppercase tracking-widest mb-1">
+                                        Add Update / Remark <span className="text-gray-400 normal-case font-medium">(optional)</span>
                                     </label>
+                                    <p className="text-xs text-gray-400 font-medium mb-2">This will be added to the complaint's update history visible to the citizen.</p>
                                     <textarea
                                         value={remarks}
                                         onChange={(e) => setRemarks(e.target.value)}
-                                        placeholder="Add notes about this update..."
+                                        placeholder={
+                                            targetStatus === 'In Progress' ? 'E.g. Team has been dispatched to the site...' :
+                                            targetStatus === 'Resolved' ? 'E.g. Pothole has been filled and road resurfaced.' :
+                                            'E.g. Complaint reviewed — no valid evidence found.'
+                                        }
                                         rows={3}
                                         className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-100 resize-none transition-all"
                                     />

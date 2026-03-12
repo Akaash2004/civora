@@ -91,8 +91,16 @@ exports.updateComplaint = async (req, res) => {
         }
 
         if (status) complaint.status = status;
-        if (remarks) complaint.remarks = remarks;
         if (priority) complaint.priority = priority;
+
+        // Push a new remark entry instead of overwriting
+        if (remarks && remarks.trim()) {
+            complaint.remarks.push({
+                text: remarks.trim(),
+                statusAtTime: status || complaint.status,
+                createdAt: new Date()
+            });
+        }
 
         // If a resolution proof image was uploaded, save it
         if (req.file) {
