@@ -48,6 +48,9 @@ const complaintSchema = new mongoose.Schema({
     remarks: {
         type: String
     },
+    resolutionProofUrl: {
+        type: String
+    },
     department: {
         type: String,
         enum: ['PWD', 'Sanitation', 'Water Supply', 'Electricity', 'Drainage']

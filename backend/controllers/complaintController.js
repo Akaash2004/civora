@@ -78,7 +78,7 @@ exports.getComplaintById = async (req, res) => {
     }
 };
 
-// @desc    Update Complaint Status/Remarks
+// @desc    Update Complaint Status/Remarks (with optional resolution proof image)
 // @route   PATCH /api/complaints/:id
 // @access  Private (Authority/Admin)
 exports.updateComplaint = async (req, res) => {
@@ -93,6 +93,11 @@ exports.updateComplaint = async (req, res) => {
         if (status) complaint.status = status;
         if (remarks) complaint.remarks = remarks;
         if (priority) complaint.priority = priority;
+
+        // If a resolution proof image was uploaded, save it
+        if (req.file) {
+            complaint.resolutionProofUrl = req.file.path.replace(/\\/g, '/');
+        }
 
         const updatedComplaint = await complaint.save();
         res.json(updatedComplaint);

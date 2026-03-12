@@ -4,7 +4,7 @@ import Navbar from '../components/Navbar';
 import api, { API_BASE_URL } from '../utils/api';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { ArrowLeft, Clock, AlertCircle, CheckCircle2, XCircle, MapPin, User, Tag, Calendar, MessageSquare } from 'lucide-react';
+import { ArrowLeft, Clock, AlertCircle, CheckCircle2, XCircle, MapPin, User, Tag, Calendar, MessageSquare, ShieldCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN;
@@ -107,6 +107,9 @@ const ComplaintTracking = () => {
 
     const currentStageIndex = STATUS_STAGES.indexOf(complaint.status);
     const imageUrl = complaint.imageUrl?.startsWith('http') ? complaint.imageUrl : `${API_BASE_URL}/${complaint.imageUrl}`;
+    const proofUrl = complaint.resolutionProofUrl
+        ? (complaint.resolutionProofUrl.startsWith('http') ? complaint.resolutionProofUrl : `${API_BASE_URL}/${complaint.resolutionProofUrl}`)
+        : null;
 
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -254,6 +257,26 @@ const ComplaintTracking = () => {
                                     ) : (
                                         <p className="text-sm text-gray-400 font-medium italic">No remarks provided yet.</p>
                                     )}
+                                </div>
+                            )}
+
+                            {/* Resolution Proof Section */}
+                            {proofUrl && (
+                                <div className="mt-8 pt-6 border-t border-gray-100">
+                                    <h3 className="text-sm font-bold text-gray-900 uppercase tracking-widest mb-3 flex items-center gap-2">
+                                        <ShieldCheck size={15} className="text-emerald-600" />
+                                        Resolution Proof
+                                    </h3>
+                                    <div className="rounded-2xl overflow-hidden border-2 border-emerald-100 bg-emerald-50">
+                                        <img
+                                            src={proofUrl}
+                                            alt="Resolution Proof"
+                                            className="w-full h-auto max-h-64 object-cover"
+                                        />
+                                    </div>
+                                    <p className="text-xs text-emerald-700 font-semibold mt-2 text-center">
+                                        ✓ Official proof submitted by the department authority
+                                    </p>
                                 </div>
                             )}
 

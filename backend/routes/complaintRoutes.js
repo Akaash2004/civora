@@ -42,7 +42,7 @@ router.route('/')
 
 router.route('/:id')
     .get(protect, getComplaintById)
-    .patch(protect, authorize('authority', 'admin'), updateComplaint);
+    .patch(protect, authorize('authority', 'admin'), upload.single('resolutionProof'), updateComplaint);
 
 router.route('/:id/vote')
     .post(protect, authorize('citizen'), voteComplaint);
