@@ -4,7 +4,7 @@ import Navbar from '../components/Navbar';
 import api, { API_BASE_URL } from '../utils/api';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { ArrowLeft, Clock, AlertCircle, CheckCircle2, MapPin, User, Tag, Calendar, MessageSquare } from 'lucide-react';
+import { ArrowLeft, Clock, AlertCircle, CheckCircle2, XCircle, MapPin, User, Tag, Calendar, MessageSquare } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN;
