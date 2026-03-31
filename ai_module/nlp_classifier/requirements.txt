@@ -1,0 +1,15 @@
+# Core ML libraries
+scikit-learn==1.4.2
+numpy==1.26.4
+pandas==2.2.2
+
+# NLP pre-processing
+nltk==3.8.1
+
+# Model persistence
+joblib==1.4.2
+
+# API server (for integration with Node.js)
+fastapi==0.111.1
+uvicorn[standard]==0.30.1
+pydantic==2.7.4
